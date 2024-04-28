@@ -23,23 +23,29 @@ const PersonName = ({ person, index }: PersonNameProps) => {
   const { removePerson, changeName } = React.useContext(AppContext);
 
   return (
-    <>
+    <Stack alignItems={"center"} spacing={2} direction={"row"}>
       <TextField
         id="outlined-basic"
-        label={`Friend ${index + 1} Name`}
+        label={`Friend's Name`}
         variant="outlined"
         value={person.name}
         onChange={({ target }) => changeName(index, target.value)}
-      />
-      <IconButton
-        onClick={() => removePerson(index)}
         size="small"
-        aria-label="delete"
-      >
-        <Minus />
-      </IconButton>
-      <Typography fontSize={16}>had</Typography>
-    </>
+        InputProps={{
+          endAdornment: (
+            <IconButton
+              onClick={() => removePerson(index)}
+              size="small"
+              aria-label="delete"
+            >
+              <Minus size={20} />
+            </IconButton>
+          ),
+        }}
+      />
+
+      <Typography>had</Typography>
+    </Stack>
   );
 };
 

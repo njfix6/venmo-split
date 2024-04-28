@@ -9,6 +9,11 @@ import {
   InputAdornment,
   OutlinedInput,
   IconButton,
+  Grid,
+  Card,
+  CardHeader,
+  CardContent,
+  Chip,
 } from "@mui/material";
 import { PersonType } from "./Person";
 import { User } from "react-feather";
@@ -19,6 +24,7 @@ import PersonName from "./PersonName";
 import PersonOwes from "./PersonOwes";
 import { AppContext } from "./AppContext";
 import { formatAmountOwed, calculateAmountOwed } from "./Util";
+import { Person } from "@mui/icons-material";
 
 const PRIMARY_COLOR = "#FF0000";
 const PRIMARY_TEXT_COLOR = "#FFFFFF";
@@ -30,6 +36,13 @@ const theme = createTheme({
       main: PRIMARY_COLOR,
       dark: PRIMARY_COLOR,
       contrastText: PRIMARY_TEXT_COLOR,
+    },
+  },
+  components: {
+    MuiCard: {
+      defaultProps: {
+        elevation: 3,
+      },
     },
   },
 });
@@ -60,7 +73,7 @@ function App() {
 
   const initPerson = () => {
     const person: PersonType = {
-      name: "",
+      name: `Friend ${persons.length} `,
       items: [],
     };
 
@@ -170,76 +183,138 @@ function App() {
           changeName,
         }}
       >
-        <Box margin={"100px"}>
-          <Stack>
-            <Typography fontFamily={"Pacifico"} fontSize={64}>
-              <span style={{ color: PRIMARY_COLOR }}>Venmo Split</span>
-            </Typography>
-            <Typography fontSize={24}>
-              The easiest way to split the check
-            </Typography>
-          </Stack>
-          <Stack marginTop={"100px"} spacing={"100px"}>
-            <Stack spacing={2} direction={"row"} alignItems={"center"}>
-              <Typography fontSize={24}>Total Amount:</Typography>
-              <Box>
-                <FormControl>
-                  <OutlinedInput
-                    value={totalAmount}
-                    onChange={handleChangeTotalAmount}
-                    id="outlined-adornment-amount"
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                    type="number"
+        <Box margin={2}>
+          <Grid container spacing={2}>
+            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={10} md={6}>
+              <Stack spacing={3}>
+                <Stack>
+                  <Typography fontFamily={"Pacifico"} fontSize={64}>
+                    <span style={{ color: PRIMARY_COLOR }}>Venmo Split</span>
+                  </Typography>
+                  <Typography fontSize={24}>
+                    The easiest way to split the check
+                  </Typography>
+                </Stack>
+
+                <Card>
+                  <CardHeader
+                    avatar={<Chip label="Step 1" />}
+                    title="Total Amount Spent"
                   />
-                </FormControl>
-              </Box>
-            </Stack>
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Typography variant="body2" color="text.secondary">
+                        Fill in the total amount spent on the bill, including
+                        tax and tip.
+                      </Typography>
 
-            <Stack marginTop={"100px"} spacing={4}>
-              {persons?.map((person: PersonType, i: number) => {
-                if (i === 0) {
-                  return (
-                    <>
-                      <Stack
-                        spacing={2}
-                        direction={"row"}
-                        alignItems={"center"}
-                      >
-                        <Typography fontSize={24}>You Had:</Typography>
-                        <PersonItems person={person} personIndex={i} />
-                      </Stack>
-                      <Typography fontSize={24}>Split with...</Typography>
-                    </>
-                  );
-                }
-
-                return (
-                  <Box>
-                    <Stack alignItems={"center"} spacing={2} direction={"row"}>
-                      <PersonName person={person} index={i} />
-                      <PersonItems person={person} personIndex={i} />
+                      <FormControl>
+                        <OutlinedInput
+                          value={totalAmount}
+                          onChange={handleChangeTotalAmount}
+                          id="outlined-adornment-amount"
+                          startAdornment={
+                            <InputAdornment position="start">$</InputAdornment>
+                          }
+                          type="number"
+                        />
+                      </FormControl>
                     </Stack>
-                    <PersonOwes
-                      amountOwed={formatAmountOwed(
-                        calculateAmountOwed(persons, totalAmount, i)
-                      )}
-                    />
-                  </Box>
-                );
-              })}
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader
+                    avatar={<Chip label="Step 2" />}
+                    title="Your Spending"
+                  />
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Typography variant="body2" color="text.secondary">
+                        Fill in how much you spent on the bill, not including
+                        tax and tip.
+                      </Typography>
 
-              <Box>
-                <Button onClick={initPerson} variant="contained">
-                  <Box style={{ display: "flex" }} mr={1}>
-                    <User />
-                  </Box>
-                  Add Friend
-                </Button>
-              </Box>
-            </Stack>
-          </Stack>
+                      <Box>
+                        {persons.map((person, i) => {
+                          if (i === 0) {
+                            return (
+                              <PersonItems person={person} personIndex={i} />
+                            );
+                          }
+                        })}
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader
+                    avatar={<Chip label="Step 3" />}
+                    title="Amount Split Between Friends"
+                  />
+
+                  <CardContent>
+                    <Stack spacing={4}>
+                      <Typography variant="body2" color="text.secondary">
+                        Add friends and fill in how much each friend spent, not
+                        including tax and tip.
+                      </Typography>
+
+                      {persons.map((person, i) => {
+                        if (i > 0) {
+                          const personRender = (
+                            <Stack>
+                              <PersonItems
+                                person={person}
+                                personIndex={i}
+                                name={<PersonName person={person} index={i} />}
+                              />
+                            </Stack>
+                          );
+
+                          return personRender;
+                        }
+                      })}
+
+                      <Box>
+                        <Button onClick={initPerson} variant="contained">
+                          <Person />
+                        </Button>
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+                {persons.length > 1 && (
+                  <Card>
+                    <CardHeader
+                      avatar={<Chip label="Finalize" />}
+                      title="Venmo Your Friends"
+                    />
+
+                    <CardContent>
+                      <Stack spacing={2}>
+                        {persons.map((person, i) => {
+                          if (i > 0) {
+                            const personRender = (
+                              <PersonOwes
+                                persons={persons}
+                                totalAmount={totalAmount}
+                                personIndex={i}
+                              />
+                            );
+
+                            return personRender;
+                          }
+                        })}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
+              </Stack>
+            </Grid>
+            <Grid item xs={1} md={3}></Grid>
+          </Grid>
         </Box>
       </AppContext.Provider>
     </ThemeProvider>

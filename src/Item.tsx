@@ -7,6 +7,7 @@ import {
   FormControl,
   Chip,
   TextField,
+  Box,
   IconButton,
 } from "@mui/material";
 import { Minus } from "react-feather";
@@ -45,15 +46,18 @@ const Item = ({ item, index, personIndex }: ItemProps) => {
           value={item.cost}
           type="number"
           onChange={handleChangeTotalAmount}
+          size={"small"}
+          endAdornment={
+            <IconButton
+              onClick={() => removeItem(personIndex, index)}
+              size="small"
+              aria-label="delete"
+            >
+              <Minus size={20} />
+            </IconButton>
+          }
         />
       </FormControl>
-      <IconButton
-        onClick={() => removeItem(personIndex, index)}
-        size="small"
-        aria-label="delete"
-      >
-        <Minus />
-      </IconButton>
     </>
   );
 };
