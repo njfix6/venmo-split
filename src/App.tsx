@@ -237,7 +237,6 @@ function App() {
                     The easiest way to split the check
                   </Typography>
                 </Stack>
-
                 <Card>
                   <CardHeader
                     avatar={<Chip label={<b>Step 1</b>} />}
@@ -265,71 +264,78 @@ function App() {
                     </Stack>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader
-                    avatar={<Chip label={<b>Step 2</b>} />}
-                    title={<b>Your Spending</b>}
-                  />
-                  <Divider />
+                {totalAmount > 0 && (
+                  <Card>
+                    <CardHeader
+                      avatar={<Chip label={<b>Step 2</b>} />}
+                      title={<b>Your Spending</b>}
+                    />
+                    <Divider />
 
-                  <CardContent>
-                    <Stack spacing={2}>
-                      <Typography variant="body2" color="text.secondary">
-                        Fill in how much you spent on the bill, not including
-                        tax and tip.
-                      </Typography>
+                    <CardContent>
+                      <Stack spacing={2}>
+                        <Typography variant="body2" color="text.secondary">
+                          Fill in how much you spent on the bill, not including
+                          tax and tip.
+                        </Typography>
 
-                      <Box>
-                        {persons.map((person, i) => {
-                          if (i === 0) {
-                            return (
-                              <PersonItems person={person} personIndex={i} />
-                            );
-                          }
-                        })}
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
+                        <Box>
+                          {persons.map((person, i) => {
+                            if (i === 0) {
+                              return (
+                                <PersonItems person={person} personIndex={i} />
+                              );
+                            }
+                          })}
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
+                {totalAmount > 0 &&
+                  persons[0] &&
+                  persons[0].items.length > 0 && (
+                    <Card>
+                      <CardHeader
+                        avatar={<Chip label={<b>Step 3</b>} />}
+                        title={<b>Amount Split Between Friends</b>}
+                      />
+                      <Divider />
 
-                <Card>
-                  <CardHeader
-                    avatar={<Chip label={<b>Step 3</b>} />}
-                    title={<b>Amount Split Between Friends</b>}
-                  />
-                  <Divider />
+                      <CardContent>
+                        <Stack spacing={4}>
+                          <Typography variant="body2" color="text.secondary">
+                            Add friends and fill in how much each friend spent,
+                            not including tax and tip.
+                          </Typography>
 
-                  <CardContent>
-                    <Stack spacing={4}>
-                      <Typography variant="body2" color="text.secondary">
-                        Add friends and fill in how much each friend spent, not
-                        including tax and tip.
-                      </Typography>
+                          {persons.map((person, i) => {
+                            if (i > 0) {
+                              const personRender = (
+                                <Stack>
+                                  <PersonItems
+                                    person={person}
+                                    personIndex={i}
+                                    name={
+                                      <PersonName person={person} index={i} />
+                                    }
+                                  />
+                                </Stack>
+                              );
 
-                      {persons.map((person, i) => {
-                        if (i > 0) {
-                          const personRender = (
-                            <Stack>
-                              <PersonItems
-                                person={person}
-                                personIndex={i}
-                                name={<PersonName person={person} index={i} />}
-                              />
-                            </Stack>
-                          );
+                              return personRender;
+                            }
+                          })}
 
-                          return personRender;
-                        }
-                      })}
-
-                      <Box>
-                        <Button onClick={initPerson} variant="contained">
-                          <Person />
-                        </Button>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
+                          <Box>
+                            <Button onClick={initPerson} variant="contained">
+                              <Person />
+                            </Button>
+                          </Box>
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  )}
                 {persons.length > 1 && (
                   <Card>
                     <CardHeader
