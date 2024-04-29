@@ -16,7 +16,9 @@
   "eslint.alwaysShowStatus": true,
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll": true,
+    "source.organizeImports": true
   },
   "eslint.codeAction.showDocumentation": {
     "enable": true

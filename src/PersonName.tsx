@@ -1,18 +1,9 @@
+import { IconButton, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
-import "./App.css";
-import {
-  TextField,
-  Stack,
-  Button,
-  Box,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import Item, { ItemType } from "./Item";
-import { Plus } from "react-feather";
-import { PersonType } from "./Person";
 import { Minus } from "react-feather";
+import "./App.css";
 import { AppContext } from "./AppContext";
+import { PersonType } from "./Person";
 
 type PersonNameProps = {
   person: PersonType;

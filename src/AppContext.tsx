@@ -1,4 +1,5 @@
 import React from "react";
+import { Rounding } from "./Util";
 
 type AppContextContextProps = {
   removeItem: (personIndex: number, itemIndex: number) => void;
@@ -10,6 +11,7 @@ type AppContextContextProps = {
   ) => void;
   removePerson: (personIndex: number) => void;
   changeName: (personIndex: number, name: string) => void;
+  rounding: Rounding;
 };
 
 export const AppContext = React.createContext<AppContextContextProps>({
@@ -18,4 +20,5 @@ export const AppContext = React.createContext<AppContextContextProps>({
   changePriceItem: () => null,
   removePerson: () => null,
   changeName: () => null,
+  rounding: Rounding.Nearest,
 });

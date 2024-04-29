@@ -1,30 +1,43 @@
-import React from "react";
-import "./App.css";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  ExitToApp,
+  Person,
+  SwapVert,
+} from "@mui/icons-material";
 import {
   Box,
-  Stack,
-  Typography,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Divider,
   FormControl,
+  Grid,
   InputAdornment,
   OutlinedInput,
-  IconButton,
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Chip,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
 } from "@mui/material";
-import { PersonType } from "./Person";
-import { User } from "react-feather";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import React from "react";
+import "./App.css";
+import { AppContext } from "./AppContext";
 import { ItemType } from "./Item";
+import { PersonType } from "./Person";
 import PersonItems from "./PersonItems";
 import PersonName from "./PersonName";
 import PersonOwes from "./PersonOwes";
-import { AppContext } from "./AppContext";
-import { formatAmountOwed, calculateAmountOwed } from "./Util";
-import { Person } from "@mui/icons-material";
+import {
+  Rounding,
+  calculateAmountOwed,
+  formatAmountOwed,
+  stringToRounding,
+} from "./Util";
 
 const PRIMARY_COLOR = "#FF0000";
 const PRIMARY_TEXT_COLOR = "#FFFFFF";
@@ -41,7 +54,7 @@ const theme = createTheme({
   components: {
     MuiCard: {
       defaultProps: {
-        elevation: 3,
+        variant: "outlined",
       },
     },
   },
@@ -54,6 +67,19 @@ function App() {
       items: [],
     },
   ]);
+
+  const [rounding, setRounding] = React.useState<Rounding>(Rounding.Nearest);
+
+  const handleSetRounding = (rounding: Rounding) => {
+    setRounding(rounding);
+  };
+
+  const handleRoundingChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string
+  ) => {
+    handleSetRounding(stringToRounding(newAlignment));
+  };
 
   const [totalAmount, setTotalAmount] = React.useState<number>(0);
 
@@ -80,6 +106,22 @@ function App() {
     handleSetPersons([...persons, person]);
   };
 
+  const openVenmosURL = () => {
+    persons
+      .filter((person, i) => i > 0)
+      .forEach((person, personIndex) => {
+        const amountOwed = formatAmountOwed(
+          calculateAmountOwed(persons, totalAmount, personIndex),
+          rounding
+        );
+
+        window.open(
+          `https://account.venmo.com/pay?amount=${amountOwed ?? 0}`,
+          "_blank"
+        );
+      });
+  };
+
   const removeItem = (personIndex: number, itemIndex: number) => {
     const updatedPersons: PersonType[] = persons.map((person, index) => {
       if (index === personIndex) {
@@ -102,8 +144,6 @@ function App() {
     const updatedPersons: PersonType[] = persons.filter((person, index) => {
       return personIndex !== index;
     });
-
-    console.log("debug: remove person ", personIndex, persons, updatedPersons);
 
     handleSetPersons(updatedPersons);
   };
@@ -181,27 +221,29 @@ function App() {
           changePriceItem,
           removePerson,
           changeName,
+          rounding,
         }}
       >
-        <Box margin={2}>
+        <Box margin={2} marginBottom={20}>
           <Grid container spacing={2}>
-            <Grid item xs={1} md={3}></Grid>
-            <Grid item xs={10} md={6}>
-              <Stack spacing={3}>
-                <Stack>
+            <Grid item xs={1} lg={3}></Grid>
+            <Grid item xs={10} lg={6}>
+              <Stack spacing={4}>
+                <Stack spacing={0.5}>
                   <Typography fontFamily={"Pacifico"} fontSize={64}>
                     <span style={{ color: PRIMARY_COLOR }}>Venmo Split</span>
                   </Typography>
-                  <Typography fontSize={24}>
+                  <Typography fontSize={22} fontFamily={"PermanentMarker"}>
                     The easiest way to split the check
                   </Typography>
                 </Stack>
 
                 <Card>
                   <CardHeader
-                    avatar={<Chip label="Step 1" />}
-                    title="Total Amount Spent"
+                    avatar={<Chip label={<b>Step 1</b>} />}
+                    title={<b>Total Amount Spent</b>}
                   />
+                  <Divider />
                   <CardContent>
                     <Stack spacing={2}>
                       <Typography variant="body2" color="text.secondary">
@@ -225,9 +267,11 @@ function App() {
                 </Card>
                 <Card>
                   <CardHeader
-                    avatar={<Chip label="Step 2" />}
-                    title="Your Spending"
+                    avatar={<Chip label={<b>Step 2</b>} />}
+                    title={<b>Your Spending</b>}
                   />
+                  <Divider />
+
                   <CardContent>
                     <Stack spacing={2}>
                       <Typography variant="body2" color="text.secondary">
@@ -250,9 +294,10 @@ function App() {
 
                 <Card>
                   <CardHeader
-                    avatar={<Chip label="Step 3" />}
-                    title="Amount Split Between Friends"
+                    avatar={<Chip label={<b>Step 3</b>} />}
+                    title={<b>Amount Split Between Friends</b>}
                   />
+                  <Divider />
 
                   <CardContent>
                     <Stack spacing={4}>
@@ -288,32 +333,90 @@ function App() {
                 {persons.length > 1 && (
                   <Card>
                     <CardHeader
-                      avatar={<Chip label="Finalize" />}
-                      title="Venmo Your Friends"
+                      avatar={<Chip label={<b>Finalize</b>} />}
+                      title={<b>Venmo Your Friends</b>}
+                      action={
+                        <ToggleButtonGroup
+                          value={rounding}
+                          exclusive
+                          onChange={handleRoundingChange}
+                          size="small"
+                          aria-label="Platform"
+                        >
+                          <ToggleButton
+                            value="justify"
+                            aria-label="justified"
+                            disabled
+                          >
+                            $0.00
+                          </ToggleButton>
+                          <Tooltip
+                            placement="top"
+                            title="Round up to 2 decimal places."
+                          >
+                            <ToggleButton value={Rounding.Up}>
+                              <ArrowUpward />
+                            </ToggleButton>
+                          </Tooltip>
+                          <Tooltip
+                            placement="top"
+                            title="Round to the nearest 2 decimal places."
+                          >
+                            <ToggleButton value={Rounding.Nearest}>
+                              <SwapVert />
+                            </ToggleButton>
+                          </Tooltip>
+                          <Tooltip
+                            placement="top"
+                            title="Round down to 2 decimal places."
+                          >
+                            <ToggleButton value={Rounding.Down}>
+                              <ArrowDownward />
+                            </ToggleButton>
+                          </Tooltip>
+                        </ToggleButtonGroup>
+                      }
                     />
 
+                    <Divider />
                     <CardContent>
-                      <Stack spacing={2}>
+                      <Grid container spacing={2}>
                         {persons.map((person, i) => {
                           if (i > 0) {
                             const personRender = (
-                              <PersonOwes
-                                persons={persons}
-                                totalAmount={totalAmount}
-                                personIndex={i}
-                              />
+                              <Grid item xs={12} md={5}>
+                                <PersonOwes
+                                  persons={persons}
+                                  totalAmount={totalAmount}
+                                  personIndex={i}
+                                />
+                              </Grid>
                             );
 
                             return personRender;
                           }
                         })}
-                      </Stack>
+                      </Grid>
                     </CardContent>
+                    <Divider />
+
+                    <Box sx={{ p: 2 }}>
+                      <Button
+                        variant="contained"
+                        onClick={openVenmosURL}
+                        size={"small"}
+                      >
+                        <Typography marginRight={2} variant="body2">
+                          Create Venmos
+                        </Typography>
+                        <ExitToApp fontSize={"small"} />
+                      </Button>
+                    </Box>
                   </Card>
                 )}
               </Stack>
             </Grid>
-            <Grid item xs={1} md={3}></Grid>
+            <Grid item xs={1} lg={3}></Grid>
           </Grid>
         </Box>
       </AppContext.Provider>

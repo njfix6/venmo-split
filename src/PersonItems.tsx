@@ -1,11 +1,10 @@
+import { Fastfood } from "@mui/icons-material";
+import { Button, Grid, Stack } from "@mui/material";
 import React from "react";
 import "./App.css";
-import { TextField, Stack, Button, Box, Grid } from "@mui/material";
-import Item, { ItemType } from "./Item";
-import { Plus } from "react-feather";
-import { PersonType } from "./Person";
 import { AppContext } from "./AppContext";
-import { Fastfood } from "@mui/icons-material";
+import Item, { ItemType } from "./Item";
+import { PersonType } from "./Person";
 
 type PersonItemsProps = {
   person: PersonType;
