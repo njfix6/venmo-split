@@ -390,7 +390,7 @@ function App() {
                         {persons.map((person, i) => {
                           if (i > 0) {
                             const personRender = (
-                              <Grid item xs={12} md={5}>
+                              <Grid item xs={12} md={6}>
                                 <PersonOwes
                                   persons={persons}
                                   totalAmount={totalAmount}
