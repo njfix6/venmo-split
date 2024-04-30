@@ -2,8 +2,8 @@ import { Person } from "@mui/icons-material";
 import {
   Card,
   CardContent,
-  CardHeader,
   Divider,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -52,19 +52,16 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
   return (
     <>
       <Card variant="outlined">
-        <CardHeader
-          avatar={<Person />}
-          title={
-            <Typography variant="h5" component="div">
-              {formatName(persons[personIndex].name)}
-            </Typography>
-          }
-          action={
-            <Typography variant="h6" component="div">
-              ${amountOwed}
-            </Typography>
-          }
-        />
+        <Stack direction={"row"} spacing={2} alignItems={"center"} margin={2}>
+          <Person />
+          <Typography variant="h5" component="div" color="text.secondary">
+            {formatName(persons[personIndex].name)} owes:
+          </Typography>
+          <div style={{ flexGrow: 1 }} />
+          <Typography variant="h5" component="div" marginTop={0.5}>
+            ${amountOwed}
+          </Typography>
+        </Stack>
         <Divider />
         <CardContent>
           <TableContainer>
