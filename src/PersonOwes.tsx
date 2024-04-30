@@ -11,6 +11,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
   Typography,
   styled,
@@ -81,11 +82,11 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
       <Card variant="outlined">
         <Stack direction={"row"} spacing={2} alignItems={"center"} margin={2}>
           <Person />
-          <Typography variant="h5" component="div" color="text.secondary">
+          <Typography variant="h6" component="div" color="text.secondary">
             {formatName(persons[personIndex].name)} owes:
           </Typography>
           <div style={{ flexGrow: 1 }} />
-          <Typography variant="h5" component="div" marginTop={0.5}>
+          <Typography variant="h6" component="div" marginTop={0.5}>
             ${amountOwed}
           </Typography>
           <ExpandMore
@@ -103,6 +104,12 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
           <CardContent>
             <TableContainer>
               <Table size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Breakdown:</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
                 <TableBody>
                   <TableRow key={"personalTotal"}>
                     <TableCell align="left">
