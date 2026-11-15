@@ -22,6 +22,8 @@ Single-page React app (Vite + React 18 + TypeScript + MUI v5). No routing.
 - **Data model**: `persons[0]` is always "self"; indexes > 0 are friends. Each person has a list of items with a `cost`.
 - **Split math**: `src/Util.tsx` — `calculateAmountOwed` splits the total proportionally to each person's item subtotal; `formatAmountOwed` applies the selected `Rounding`. Covered by `src/Util.test.tsx`.
 - **Venmo**: "Create Venmos" opens `https://account.venmo.com/pay?amount=…` in a new tab per friend.
+- **Mobile-first**: Layout is a single max-720px column; item inputs are full-width on phones (`xs={12} sm={6} md={4}`), and money inputs use `inputMode="decimal"` so phones show a decimal keypad. Keep inputs at 16px font or iOS Safari zooms on focus. Each friend's card has its own Venmo link because mobile browsers block all but the first `window.open` in "Create Venmos". Check changes at 320px width (no horizontal scroll).
+- **Phone testing**: `vite.config.ts` sets `server.host`/`preview.host` so the dev server is reachable on the LAN.
 - **Fonts**: `public/Pacifico-Regular.ttf` and `public/PermanentMarker-Regular.ttf`, loaded via `@font-face` in `src/index.css`.
 
 ## Deploy

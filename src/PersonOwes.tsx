@@ -1,5 +1,7 @@
-import { Person } from "@mui/icons-material";
+import { ExitToApp, Person } from "@mui/icons-material";
 import {
+  Box,
+  Button,
   Card,
   CardContent,
   Collapse,
@@ -29,6 +31,7 @@ import {
   getTotalCostofItems,
   getTotalItemCostForPerson,
   getTotalTaxAndTip,
+  venmoPayURL,
 } from "./Util";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -53,7 +56,6 @@ type PersonOwesProps = {
   personIndex: number;
   persons: PersonType[];
 };
-// https://account.venmo.com/pay?amount=10
 
 const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
   const { rounding } = React.useContext(AppContext);
@@ -66,7 +68,7 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
 
   const amountOwed = formatAmountOwed(
     calculateAmountOwed(persons, totalAmount, personIndex),
-    rounding
+    rounding,
   );
 
   const formatName = (name: string) => {
@@ -80,13 +82,32 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
   return (
     <>
       <Card variant="outlined">
-        <Stack direction={"row"} spacing={2} alignItems={"center"} margin={2}>
+        <Stack
+          direction={"row"}
+          spacing={{ xs: 1, sm: 2 }}
+          alignItems={"center"}
+          margin={2}
+        >
           <Person />
-          <Typography variant="h6" component="div" color="text.secondary">
+          <Typography
+            variant="h6"
+            component="div"
+            color="text.secondary"
+            noWrap
+            sx={{ minWidth: 0, fontSize: { xs: "1.05rem", sm: "1.25rem" } }}
+          >
             {formatName(persons[personIndex].name)} owes:
           </Typography>
           <div style={{ flexGrow: 1 }} />
-          <Typography variant="h6" component="div" marginTop={0.5}>
+          <Typography
+            variant="h6"
+            component="div"
+            marginTop={0.5}
+            sx={{
+              whiteSpace: "nowrap",
+              fontSize: { xs: "1.05rem", sm: "1.25rem" },
+            }}
+          >
             ${amountOwed}
           </Typography>
           <ExpandMore
@@ -98,12 +119,35 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
             <ExpandMoreIcon />
           </ExpandMore>
         </Stack>
+        {/* Per-friend link: mobile browsers block all but the first of the
+            tabs "Create Venmos" opens, so each friend gets their own button. */}
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Button
+            component="a"
+            href={venmoPayURL(amountOwed)}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outlined"
+            size="small"
+            fullWidth
+            endIcon={<ExitToApp fontSize="small" />}
+          >
+            Venmo ${amountOwed}
+          </Button>
+        </Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Divider />
 
-          <CardContent>
+          <CardContent sx={{ px: { xs: 1, sm: 2 } }}>
             <TableContainer>
-              <Table size="small" aria-label="a dense table">
+              <Table
+                size="small"
+                aria-label="breakdown"
+                sx={{
+                  "& td, & th": { px: { xs: 0.75, sm: 2 } },
+                  "& td:last-of-type": { whiteSpace: "nowrap" },
+                }}
+              >
                 <TableHead>
                   <TableRow>
                     <TableCell>Breakdown:</TableCell>
@@ -118,7 +162,7 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{`$${formatLongValue(
-                      getTotalItemCostForPerson(persons, personIndex)
+                      getTotalItemCostForPerson(persons, personIndex),
                     )}`}</TableCell>
                   </TableRow>
 
@@ -129,7 +173,7 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{`$${formatLongValue(
-                      getTotalCostofItems(persons, totalAmount, personIndex)
+                      getTotalCostofItems(persons, totalAmount, personIndex),
                     )}`}</TableCell>
                   </TableRow>
                   <TableRow
@@ -142,7 +186,7 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{`$${formatLongValue(
-                      getTotalTaxAndTip(persons, totalAmount, personIndex)
+                      getTotalTaxAndTip(persons, totalAmount, personIndex),
                     )}`}</TableCell>
                   </TableRow>
 
@@ -150,11 +194,11 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                     <TableCell align="left">
                       <Typography color="text.secondary" variant="body2">
                         {`Percent of total amount spent excluding tax and tip ($${formatLongValue(
-                          getTotalItemCostForPerson(persons, personIndex)
+                          getTotalItemCostForPerson(persons, personIndex),
                         )}/$${getTotalCostofItems(
                           persons,
                           totalAmount,
-                          personIndex
+                          personIndex,
                         )} ):`}
                       </Typography>
                     </TableCell>
@@ -162,8 +206,8 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                       getPersonsPercentOfTotal(
                         persons,
                         getTotalCostofItems(persons, totalAmount, personIndex),
-                        personIndex
-                      ) * 100
+                        personIndex,
+                      ) * 100,
                     )}%`}</TableCell>
                   </TableRow>
 
@@ -179,19 +223,19 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                             getTotalCostofItems(
                               persons,
                               totalAmount,
-                              personIndex
+                              personIndex,
                             ),
-                            personIndex
-                          )
+                            personIndex,
+                          ),
                         )}x$${getTotalTaxAndTip(
                           persons,
                           totalAmount,
-                          personIndex
+                          personIndex,
                         )}):`}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{`$${formatLongValue(
-                      getPersonsTaxAmount(persons, totalAmount, personIndex)
+                      getPersonsTaxAmount(persons, totalAmount, personIndex),
                     )}`}</TableCell>
                   </TableRow>
 
@@ -202,9 +246,13 @@ const PersonOwes = ({ persons, totalAmount, personIndex }: PersonOwesProps) => {
                     <TableCell align="left">
                       <Typography color="text.secondary" variant="body2">
                         {`Total Amount Owed ($${formatLongValue(
-                          getPersonsTaxAmount(persons, totalAmount, personIndex)
+                          getPersonsTaxAmount(
+                            persons,
+                            totalAmount,
+                            personIndex,
+                          ),
                         )}+$${formatLongValue(
-                          getTotalItemCostForPerson(persons, personIndex)
+                          getTotalItemCostForPerson(persons, personIndex),
                         )}):`}
                       </Typography>
                     </TableCell>

@@ -14,6 +14,10 @@ npm run build    # type-check + production build to ./dist
 npm run preview  # serve the built site locally
 ```
 
+### Testing on your phone
+
+`npm run dev` listens on your local network (`server.host` in `vite.config.ts`). Vite prints a `Network:` URL like `http://192.168.1.20:5173` — open it on a phone on the same Wi-Fi and edits hot-reload there. `npm run preview` does the same for the production build.
+
 ## Deploying to Cloudflare
 
 Configured via `wrangler.jsonc`. In the Cloudflare dashboard → **Workers & Pages** → **Create application** → **Import a repository**, pick this repo and use:

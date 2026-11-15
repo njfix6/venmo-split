@@ -1,14 +1,11 @@
 import React from "react";
 import "./App.css";
 import {
-  InputLabel,
-  InputAdornment,
-  OutlinedInput,
   FormControl,
-  Chip,
-  TextField,
-  Box,
   IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
 } from "@mui/material";
 import { Minus } from "react-feather";
 import { AppContext } from "./AppContext";
@@ -27,31 +24,35 @@ const Item = ({ item, index, personIndex }: ItemProps) => {
   const { changePriceItem, removeItem } = React.useContext(AppContext);
 
   const LABEL = `Item ${index + 1}`;
+  const inputId = `item-${personIndex}-${index}`;
 
   const handleChangeTotalAmount = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ): void => {
     changePriceItem(personIndex, index, parseFloat(e.target.value));
   };
 
   return (
     <>
-      <FormControl>
-        <InputLabel htmlFor="outlined-adornment-amount">{LABEL}</InputLabel>
+      <FormControl fullWidth>
+        <InputLabel htmlFor={inputId} size="small">
+          {LABEL}
+        </InputLabel>
 
         <OutlinedInput
-          id="outlined-adornment-amount"
+          id={inputId}
           startAdornment={<InputAdornment position="start">$</InputAdornment>}
           label={LABEL}
           value={item.cost}
           type="number"
+          inputProps={{ inputMode: "decimal", min: 0 }}
           onChange={handleChangeTotalAmount}
           size={"small"}
           endAdornment={
             <IconButton
               onClick={() => removeItem(personIndex, index)}
               size="small"
-              aria-label="delete"
+              aria-label="remove item"
             >
               <Minus size={20} />
             </IconButton>

@@ -37,6 +37,7 @@ import {
   calculateAmountOwed,
   formatAmountOwed,
   stringToRounding,
+  venmoPayURL,
 } from "./Util";
 
 const PRIMARY_COLOR = "#FF0000";
@@ -76,7 +77,7 @@ function App() {
 
   const handleRoundingChange = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string
+    newAlignment: string,
   ) => {
     handleSetRounding(stringToRounding(newAlignment));
   };
@@ -88,7 +89,7 @@ function App() {
   };
 
   const handleChangeTotalAmount = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ): void => {
     handleSetTotalAmount(parseFloat(e.target.value));
   };
@@ -112,12 +113,12 @@ function App() {
       .forEach((person, personIndex) => {
         const amountOwed = formatAmountOwed(
           calculateAmountOwed(persons, totalAmount, personIndex),
-          rounding
+          rounding,
         );
 
         window.open(
           `https://account.venmo.com/pay?amount=${amountOwed ?? 0}`,
-          "_blank"
+          "_blank",
         );
       });
   };
@@ -185,7 +186,7 @@ function App() {
   const changePriceItem = (
     personIndex: number,
     itemIndex: number,
-    cost: number
+    cost: number,
   ) => {
     const updatedPersons: PersonType[] = persons.map((person, i) => {
       if (i === personIndex) {
@@ -224,206 +225,221 @@ function App() {
           rounding,
         }}
       >
-        <Box margin={2} marginBottom={20}>
-          <Grid container spacing={2}>
-            <Grid item xs={1} lg={3}></Grid>
-            <Grid item xs={10} lg={6}>
-              <Stack spacing={4}>
-                <Stack spacing={0.5}>
-                  <Typography fontFamily={"Pacifico"} fontSize={64}>
-                    <span style={{ color: PRIMARY_COLOR }}>Venmo Split</span>
+        <Box
+          sx={{
+            maxWidth: 720,
+            mx: "auto",
+            px: 2,
+            pt: { xs: 2, sm: 4 },
+            pb: 20,
+          }}
+        >
+          <Stack spacing={{ xs: 3, sm: 4 }}>
+            <Stack spacing={0.5}>
+              <Typography
+                fontFamily={"Pacifico"}
+                fontSize={{ xs: 44, sm: 64 }}
+                lineHeight={1.3}
+              >
+                <span style={{ color: PRIMARY_COLOR }}>Venmo Split</span>
+              </Typography>
+              <Typography
+                fontSize={{ xs: 18, sm: 22 }}
+                fontFamily={"PermanentMarker"}
+              >
+                The easiest way to split the check
+              </Typography>
+            </Stack>
+            <Card>
+              <CardHeader
+                avatar={<Chip label={<b>Step 1</b>} />}
+                title={<b>Total Amount Spent</b>}
+              />
+              <Divider />
+              <CardContent>
+                <Stack spacing={2}>
+                  <Typography variant="body2" color="text.secondary">
+                    Fill in the total amount spent on the bill, including tax
+                    and tip.
                   </Typography>
-                  <Typography fontSize={22} fontFamily={"PermanentMarker"}>
-                    The easiest way to split the check
-                  </Typography>
-                </Stack>
-                <Card>
-                  <CardHeader
-                    avatar={<Chip label={<b>Step 1</b>} />}
-                    title={<b>Total Amount Spent</b>}
-                  />
-                  <Divider />
-                  <CardContent>
-                    <Stack spacing={2}>
-                      <Typography variant="body2" color="text.secondary">
-                        Fill in the total amount spent on the bill, including
-                        tax and tip.
-                      </Typography>
 
-                      <FormControl>
-                        <OutlinedInput
-                          value={totalAmount}
-                          onChange={handleChangeTotalAmount}
-                          id="outlined-adornment-amount"
-                          startAdornment={
-                            <InputAdornment position="start">$</InputAdornment>
-                          }
-                          type="number"
-                        />
-                      </FormControl>
-                    </Stack>
-                  </CardContent>
-                </Card>
-                {totalAmount > 0 && (
-                  <Card>
-                    <CardHeader
-                      avatar={<Chip label={<b>Step 2</b>} />}
-                      title={<b>Your Spending</b>}
-                    />
-                    <Divider />
-
-                    <CardContent>
-                      <Stack spacing={2}>
-                        <Typography variant="body2" color="text.secondary">
-                          Fill in how much you spent on the bill, not including
-                          tax and tip.
-                        </Typography>
-
-                        <Box>
-                          {persons.map((person, i) => {
-                            if (i === 0) {
-                              return (
-                                <PersonItems person={person} personIndex={i} />
-                              );
-                            }
-                          })}
-                        </Box>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                )}
-                {totalAmount > 0 &&
-                  persons[0] &&
-                  persons[0].items.length > 0 && (
-                    <Card>
-                      <CardHeader
-                        avatar={<Chip label={<b>Step 3</b>} />}
-                        title={<b>Amount Split Between Friends</b>}
-                      />
-                      <Divider />
-
-                      <CardContent>
-                        <Stack spacing={4}>
-                          <Typography variant="body2" color="text.secondary">
-                            Add friends and fill in how much each friend spent,
-                            not including tax and tip.
-                          </Typography>
-
-                          {persons.map((person, i) => {
-                            if (i > 0) {
-                              const personRender = (
-                                <Stack>
-                                  <PersonItems
-                                    person={person}
-                                    personIndex={i}
-                                    name={
-                                      <PersonName person={person} index={i} />
-                                    }
-                                  />
-                                </Stack>
-                              );
-
-                              return personRender;
-                            }
-                          })}
-
-                          <Box>
-                            <Button onClick={initPerson} variant="contained">
-                              <Person />
-                            </Button>
-                          </Box>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  )}
-                {persons.length > 1 && (
-                  <Card>
-                    <CardHeader
-                      avatar={<Chip label={<b>Finalize</b>} />}
-                      title={<b>Venmo Your Friends</b>}
-                      action={
-                        <ToggleButtonGroup
-                          value={rounding}
-                          exclusive
-                          onChange={handleRoundingChange}
-                          size="small"
-                          aria-label="Platform"
-                        >
-                          <ToggleButton
-                            value="justify"
-                            aria-label="justified"
-                            disabled
-                          >
-                            $0.00
-                          </ToggleButton>
-                          <Tooltip
-                            placement="top"
-                            title="Round up to 2 decimal places."
-                          >
-                            <ToggleButton value={Rounding.Up}>
-                              <ArrowUpward />
-                            </ToggleButton>
-                          </Tooltip>
-                          <Tooltip
-                            placement="top"
-                            title="Round to the nearest 2 decimal places."
-                          >
-                            <ToggleButton value={Rounding.Nearest}>
-                              <SwapVert />
-                            </ToggleButton>
-                          </Tooltip>
-                          <Tooltip
-                            placement="top"
-                            title="Round down to 2 decimal places."
-                          >
-                            <ToggleButton value={Rounding.Down}>
-                              <ArrowDownward />
-                            </ToggleButton>
-                          </Tooltip>
-                        </ToggleButtonGroup>
+                  <FormControl>
+                    <OutlinedInput
+                      value={totalAmount}
+                      onChange={handleChangeTotalAmount}
+                      id="outlined-adornment-amount"
+                      startAdornment={
+                        <InputAdornment position="start">$</InputAdornment>
                       }
+                      type="number"
+                      inputProps={{ inputMode: "decimal", min: 0 }}
                     />
+                  </FormControl>
+                </Stack>
+              </CardContent>
+            </Card>
+            {totalAmount > 0 && (
+              <Card>
+                <CardHeader
+                  avatar={<Chip label={<b>Step 2</b>} />}
+                  title={<b>Your Spending</b>}
+                />
+                <Divider />
 
-                    <Divider />
-                    <CardContent>
-                      <Grid container spacing={2}>
-                        {persons.map((person, i) => {
-                          if (i > 0) {
-                            const personRender = (
-                              <Grid item xs={12} md={6}>
-                                <PersonOwes
-                                  persons={persons}
-                                  totalAmount={totalAmount}
-                                  personIndex={i}
-                                />
-                              </Grid>
-                            );
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Typography variant="body2" color="text.secondary">
+                      Fill in how much you spent on the bill, not including tax
+                      and tip.
+                    </Typography>
 
-                            return personRender;
-                          }
-                        })}
-                      </Grid>
-                    </CardContent>
-                    <Divider />
+                    <Box>
+                      {persons.map((person, i) => {
+                        if (i === 0) {
+                          return (
+                            <PersonItems
+                              key={i}
+                              person={person}
+                              personIndex={i}
+                            />
+                          );
+                        }
+                      })}
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            )}
+            {totalAmount > 0 && persons[0] && persons[0].items.length > 0 && (
+              <Card>
+                <CardHeader
+                  avatar={<Chip label={<b>Step 3</b>} />}
+                  title={<b>Amount Split Between Friends</b>}
+                />
+                <Divider />
 
-                    <Box sx={{ p: 2 }}>
-                      <Button
-                        variant="contained"
-                        onClick={openVenmosURL}
-                        size={"small"}
-                      >
-                        <Typography marginRight={2} variant="body2">
-                          Create Venmos
-                        </Typography>
-                        <ExitToApp fontSize={"small"} />
+                <CardContent>
+                  <Stack spacing={4}>
+                    <Typography variant="body2" color="text.secondary">
+                      Add friends and fill in how much each friend spent, not
+                      including tax and tip.
+                    </Typography>
+
+                    {persons.map((person, i) => {
+                      if (i > 0) {
+                        const personRender = (
+                          <Stack key={i}>
+                            <PersonItems
+                              person={person}
+                              personIndex={i}
+                              name={<PersonName person={person} index={i} />}
+                            />
+                          </Stack>
+                        );
+
+                        return personRender;
+                      }
+                    })}
+
+                    <Box>
+                      <Button onClick={initPerson} variant="contained">
+                        <Person />
                       </Button>
                     </Box>
-                  </Card>
-                )}
-              </Stack>
-            </Grid>
-            <Grid item xs={1} lg={3}></Grid>
-          </Grid>
+                  </Stack>
+                </CardContent>
+              </Card>
+            )}
+            {persons.length > 1 && (
+              <Card>
+                <CardHeader
+                  avatar={<Chip label={<b>Finalize</b>} />}
+                  title={<b>Venmo Your Friends</b>}
+                  sx={{
+                    flexWrap: "wrap",
+                    rowGap: 1,
+                    "& .MuiCardHeader-action": { m: 0 },
+                  }}
+                  action={
+                    <ToggleButtonGroup
+                      value={rounding}
+                      exclusive
+                      onChange={handleRoundingChange}
+                      size="small"
+                      aria-label="Platform"
+                    >
+                      <ToggleButton
+                        value="justify"
+                        aria-label="justified"
+                        disabled
+                      >
+                        $0.00
+                      </ToggleButton>
+                      <Tooltip
+                        placement="top"
+                        title="Round up to 2 decimal places."
+                      >
+                        <ToggleButton value={Rounding.Up}>
+                          <ArrowUpward />
+                        </ToggleButton>
+                      </Tooltip>
+                      <Tooltip
+                        placement="top"
+                        title="Round to the nearest 2 decimal places."
+                      >
+                        <ToggleButton value={Rounding.Nearest}>
+                          <SwapVert />
+                        </ToggleButton>
+                      </Tooltip>
+                      <Tooltip
+                        placement="top"
+                        title="Round down to 2 decimal places."
+                      >
+                        <ToggleButton value={Rounding.Down}>
+                          <ArrowDownward />
+                        </ToggleButton>
+                      </Tooltip>
+                    </ToggleButtonGroup>
+                  }
+                />
+
+                <Divider />
+                <CardContent>
+                  <Grid container spacing={2}>
+                    {persons.map((person, i) => {
+                      if (i > 0) {
+                        const personRender = (
+                          <Grid item xs={12} md={6} key={i}>
+                            <PersonOwes
+                              persons={persons}
+                              totalAmount={totalAmount}
+                              personIndex={i}
+                            />
+                          </Grid>
+                        );
+
+                        return personRender;
+                      }
+                    })}
+                  </Grid>
+                </CardContent>
+                <Divider />
+
+                <Box sx={{ p: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={openVenmosURL}
+                    sx={{ width: { xs: "100%", sm: "auto" } }}
+                  >
+                    <Typography marginRight={2} variant="body2">
+                      Create Venmos
+                    </Typography>
+                    <ExitToApp fontSize={"small"} />
+                  </Button>
+                </Box>
+              </Card>
+            )}
+          </Stack>
         </Box>
       </AppContext.Provider>
     </ThemeProvider>
