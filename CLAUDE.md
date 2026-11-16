@@ -35,6 +35,7 @@ Cloudflare Workers (static assets), configured via `wrangler.jsonc`. Dashboard "
 - **Deploy command**: `npx wrangler deploy`
 
 - **Non-production branch builds**: enabled in the dashboard (Settings → Builds), so every PR gets a preview URL (`<branch>-venmo-split.<subdomain>.workers.dev`) and the Cloudflare bot comments it on the PR. `preview_urls: true` in `wrangler.jsonc` keeps this on.
+- **Live at**: https://venmo-split.nickfix.dev (also https://venmo-split.njfix6.workers.dev).
 - **Custom domains**: declared in `wrangler.jsonc` as `routes: [{ "pattern": "example.com", "custom_domain": true }]`. The domain must already be a zone on the Cloudflare account (buying it through Cloudflare Registrar does that). The next deploy creates the DNS record and certificate.
 
 `assets.not_found_handling: "single-page-application"` serves `index.html` for unknown paths. Do NOT also add a `public/_redirects` file — Workers treats both together as a conflicting loop rule and fails the deploy.
