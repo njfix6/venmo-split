@@ -10,16 +10,16 @@ const formatSum = (sum: number) => {
 export const getTotalCostofItems = (
   persons: PersonType[],
   totalAmount: number,
-  personIndex: number
+  personIndex: number,
 ) => {
   const totalItemCost = persons.reduce(
     (sum, current) =>
       sum +
       current.items.reduce(
         (itemSum, item) => itemSum + formatSum(item.cost),
-        0
+        0,
       ),
-    0
+    0,
   );
 
   return totalItemCost;
@@ -28,7 +28,7 @@ export const getTotalCostofItems = (
 export const calculateAmountOwed = (
   persons: PersonType[],
   totalAmount: number,
-  personIndex: number
+  personIndex: number,
 ) => {
   const totalItemCost = getTotalCostofItems(persons, totalAmount, personIndex);
 
@@ -39,7 +39,7 @@ export const calculateAmountOwed = (
   const percentCut = getPersonsPercentOfTotal(
     persons,
     totalItemCost,
-    personIndex
+    personIndex,
   );
 
   const personsTaxAndTip = tipAndTax * percentCut;
@@ -56,7 +56,7 @@ export const calculateAmountOwed = (
 export const getPersonsTaxAmount = (
   persons: PersonType[],
   totalAmount: number,
-  personIndex: number
+  personIndex: number,
 ) => {
   const totalItemCost = getTotalCostofItems(persons, totalAmount, personIndex);
 
@@ -64,7 +64,7 @@ export const getPersonsTaxAmount = (
   const percentCut = getPersonsPercentOfTotal(
     persons,
     totalItemCost,
-    personIndex
+    personIndex,
   );
 
   const personsTaxAndTip = tipAndTax * percentCut;
@@ -75,7 +75,7 @@ export const getPersonsTaxAmount = (
 export const getTotalTaxAndTip = (
   persons: PersonType[],
   totalAmount: number,
-  personIndex: number
+  personIndex: number,
 ) => {
   const totalItemCost = getTotalCostofItems(persons, totalAmount, personIndex);
 
@@ -85,12 +85,12 @@ export const getTotalTaxAndTip = (
 
 export const getTotalItemCostForPerson = (
   persons: PersonType[],
-  personIndex: number
+  personIndex: number,
 ) => {
   const personsCost = persons[personIndex]
     ? persons[personIndex].items.reduce(
         (itemSum, item) => itemSum + formatSum(item.cost),
-        0
+        0,
       )
     : 0;
 
@@ -100,7 +100,7 @@ export const getTotalItemCostForPerson = (
 export const getPersonsPercentOfTotal = (
   persons: PersonType[],
   totalItemCost: number,
-  personIndex: number
+  personIndex: number,
 ) => {
   const personsCost = getTotalItemCostForPerson(persons, personIndex);
 
@@ -158,3 +158,6 @@ export const stringToRounding = (rounding: string): Rounding => {
   }
   return Rounding.Nearest;
 };
+
+export const venmoPayURL = (amount: number) =>
+  `https://account.venmo.com/pay?amount=${amount ?? 0}`;

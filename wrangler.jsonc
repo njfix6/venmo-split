@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "venmo-split",
+  "compatibility_date": "2026-11-15",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  // Serve on <name>.<subdomain>.workers.dev and give every non-production
+  // branch/PR its own preview URL (<branch>-venmo-split.<subdomain>.workers.dev).
+  "workers_dev": true,
+  "preview_urls": true,
+  // Custom domains (the zone must be on this Cloudflare account). Deploy
+  // creates the DNS record and certificate.
+  "routes": [{ "pattern": "venmo-split.nickfix.dev", "custom_domain": true }]
+}

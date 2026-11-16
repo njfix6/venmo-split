@@ -16,11 +16,11 @@ code {
 @font-face {
   font-family: "Pacifico";   /*Can be any text*/
   src: local("Pacifico"),
-    url("../public/Pacifico-Regular.ttf") format("truetype");
+    url("/Pacifico-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "PermanentMarker";   /*Can be any text*/
   src: local("PermanentMarker"),
-    url("../public/PermanentMarker-Regular.ttf") format("truetype");
+    url("/PermanentMarker-Regular.ttf") format("truetype");
 }

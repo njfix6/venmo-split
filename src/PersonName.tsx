@@ -16,18 +16,19 @@ const PersonName = ({ person, index }: PersonNameProps) => {
   return (
     <Stack alignItems={"center"} spacing={2} direction={"row"}>
       <TextField
-        id="outlined-basic"
+        id={`friend-name-${index}`}
         label={`Friend's Name`}
         variant="outlined"
         value={person.name}
         onChange={({ target }) => changeName(index, target.value)}
         size="small"
+        sx={{ flex: 1, maxWidth: 360 }}
         InputProps={{
           endAdornment: (
             <IconButton
               onClick={() => removePerson(index)}
               size="small"
-              aria-label="delete"
+              aria-label="remove friend"
             >
               <Minus size={20} />
             </IconButton>

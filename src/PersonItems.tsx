@@ -1,5 +1,5 @@
 import { Fastfood } from "@mui/icons-material";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import React from "react";
 import "./App.css";
 import { AppContext } from "./AppContext";
@@ -17,20 +17,26 @@ const PersonItems = ({ person, personIndex, name }: PersonItemsProps) => {
 
   return (
     <>
-      <Grid container spacing={2}>
-        {name && <Grid item>{name}</Grid>}
+      <Grid container spacing={2} alignItems="center">
+        {name && (
+          <Grid item xs={12}>
+            {name}
+          </Grid>
+        )}
         {person.items.map((item: ItemType, index: number) => {
           return (
-            <Grid item xs={4} lg={3}>
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <Item item={item} index={index} personIndex={personIndex} />
             </Grid>
           );
         })}
-        <Grid item xs={2}>
-          <Button onClick={() => initItem(personIndex)} variant="contained">
-            <Stack direction={"row"} spacing={3}>
-              <Fastfood />
-            </Stack>
+        <Grid item xs="auto">
+          <Button
+            onClick={() => initItem(personIndex)}
+            variant="contained"
+            aria-label="add item"
+          >
+            <Fastfood />
           </Button>
         </Grid>
       </Grid>
