@@ -26,4 +26,12 @@ Configured via `wrangler.jsonc`. In the Cloudflare dashboard → **Workers & Pag
 - **Build command**: `npm run build`
 - **Deploy command**: `npx wrangler deploy`
 
-Pushes to the default branch redeploy automatically once Git is connected. Add a custom domain under the Worker's **Settings → Domains & Routes**.
+Pushes to the default branch redeploy automatically once Git is connected.
+
+**PR previews:** in the Worker's **Settings → Builds**, enable builds for non-production branches. Every PR then gets its own preview URL, posted as a comment on the PR.
+
+**Custom domain:** add it to `wrangler.jsonc` and push (the domain must be on your Cloudflare account):
+
+```jsonc
+"routes": [{ "pattern": "example.com", "custom_domain": true }]
+```

@@ -5,5 +5,11 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"
-  }
+  },
+  // Serve on <name>.<subdomain>.workers.dev and give every non-production
+  // branch/PR its own preview URL (<branch>-venmo-split.<subdomain>.workers.dev).
+  "workers_dev": true,
+  "preview_urls": true
+  // To attach a custom domain (must be a zone on this Cloudflare account):
+  // "routes": [{ "pattern": "example.com", "custom_domain": true }]
 }
