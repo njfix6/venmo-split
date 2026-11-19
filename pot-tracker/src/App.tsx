@@ -170,6 +170,12 @@ function LayerView(props: { state: State; at: OpenLayer; update: Update; onBack:
           ))}
         </div>
         <p className="hint">Tap your pot to mark it as yours. Tap your own marker to remove it.</p>
+        {layer.shelfPhoto && (
+          <>
+            <h3>The shelf it was put on</h3>
+            <img className="shelfphoto" src={layer.shelfPhoto} alt="The rack shelf after unloading" />
+          </>
+        )}
       </main>
     </div>
   )
@@ -214,6 +220,8 @@ function Unload({ state, update, onDone }: { state: State; update: Update; onDon
   const [type, setType] = useState<FiringType>('bisque')
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState('')
+  // A shelf photo whose label could not be read, kept so the shelf can be named by hand.
+  const [unread, setUnread] = useState<string | null>(null)
 
   const mapActive = (fn: (f: Firing) => Firing) =>
     update((s) => ({ ...s, firings: s.firings.map((f) => (f.id === active?.id ? fn(f) : f)) }))
@@ -259,9 +267,13 @@ function Unload({ state, update, onDone }: { state: State; update: Update; onDon
 
   const last = active.layers[active.layers.length - 1]
   const waiting = last && !last.shelfId ? last : null
-  const setShelf = (shelfId: string) => {
+  const setShelf = (shelfId: string, shelfPhoto?: string) => {
     setNote('')
-    mapActive((f) => ({ ...f, layers: f.layers.map((l) => (l.id === waiting?.id ? { ...l, shelfId } : l)) }))
+    setUnread(null)
+    mapActive((f) => ({
+      ...f,
+      layers: f.layers.map((l) => (l.id === waiting?.id ? { ...l, shelfId, shelfPhoto } : l)),
+    }))
   }
 
   const addLayer = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -285,19 +297,24 @@ function Unload({ state, update, onDone }: { state: State; update: Update; onDon
     if (!file) return
     setBusy(true)
     try {
-      const id = await readLabel(file)
-      if (id && state.shelves.some((s) => s.id === id)) setShelf(id)
-      else setNote('No shelf label could be read in that photo. Pick the shelf below instead.')
+      const [id, shelfPhoto] = await Promise.all([readLabel(file), shrink(file)])
+      if (id && state.shelves.some((s) => s.id === id)) setShelf(id, shelfPhoto)
+      else {
+        setUnread(shelfPhoto)
+        setNote('The shelf label could not be read in that photo. Take it again with the label in view.')
+      }
     } catch {
-      setNote('That photo could not be opened. Pick the shelf below instead.')
+      setNote('That photo could not be opened. Try taking it again.')
     } finally {
       setBusy(false)
     }
   }
 
   const cancel = () => {
-    if (window.confirm('Throw away this unload and its photos?'))
-      update((s) => ({ ...s, firings: s.firings.filter((f) => f.id !== active.id) }))
+    if (!window.confirm('Throw away this unload and its photos?')) return
+    setUnread(null)
+    setNote('')
+    update((s) => ({ ...s, firings: s.firings.filter((f) => f.id !== active.id) }))
   }
 
   return (
@@ -320,20 +337,25 @@ function Unload({ state, update, onDone }: { state: State; update: Update; onDon
 
       {waiting ? (
         <>
-          <h3>Which shelf did layer {active.layers.length} go on?</h3>
+          <h3>Put layer {active.layers.length} on a shelf, then photograph the shelf</h3>
+          <p className="hint">Keep the shelf label in the picture. That is how the app knows which shelf it is.</p>
           <label className={'btn' + (busy ? ' busy' : '')}>
             <input type="file" accept="image/*" capture="environment" hidden onChange={snapLabel} />
-            {busy ? 'Reading…' : 'Snap the shelf label'}
+            {busy ? 'Reading…' : unread ? 'Photograph the shelf again' : 'Photograph the shelf'}
           </label>
           {note && <p className="note">{note}</p>}
-          <p className="hint">Or pick it:</p>
-          <div className="choices">
-            {state.shelves.map((s) => (
-              <button key={s.id} className="chip" onClick={() => setShelf(s.id)}>
-                {s.name}
-              </button>
-            ))}
-          </div>
+          {unread && (
+            <details className="fallback">
+              <summary>Label damaged or missing?</summary>
+              <div className="choices">
+                {state.shelves.map((s) => (
+                  <button key={s.id} className="chip" onClick={() => setShelf(s.id, unread)}>
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </details>
+          )}
         </>
       ) : (
         <>

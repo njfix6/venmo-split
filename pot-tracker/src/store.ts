@@ -3,8 +3,17 @@ import { get, set } from 'idb-keyval'
 export type Place = { id: string; name: string }
 /** A "that's mine" pin. x and y are 0..1 across the layer photo. */
 export type Claim = { id: string; x: number; y: number; owner: string }
-/** One kiln layer, photographed from above, and the rack shelf it was unloaded onto. */
-export type Layer = { id: string; photo: string; shelfId: string | null; claims: Claim[] }
+/**
+ * One kiln layer and the rack shelf it was unloaded onto. `photo` is the layer
+ * seen from above in the kiln; `shelfPhoto` is the shelf afterwards, label in view.
+ */
+export type Layer = {
+  id: string
+  photo: string
+  shelfId: string | null
+  shelfPhoto?: string
+  claims: Claim[]
+}
 export type FiringType = 'bisque' | 'glaze'
 export type Firing = {
   id: string

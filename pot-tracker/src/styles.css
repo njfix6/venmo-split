@@ -331,3 +331,21 @@ input:not([type='file']) {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.shelfphoto {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+}
+
+.fallback {
+  margin-top: 14px;
+  color: var(--soft);
+  font-size: 14px;
+}
+
+.fallback .choices {
+  margin-top: 10px;
+  color: var(--ink);
+  font-size: 16px;
+}

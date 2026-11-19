@@ -7,9 +7,11 @@ potters: "has my work been fired?" and "which shelf is it on?".
 
 Nothing is attached to the pots, and nobody scans individual pieces.
 
-1. **Unloading a kiln.** The kiln tech photographs each layer from above (the
-   kilns are top-loading, so every pot is visible), then snaps the label on the
-   rack shelf that layer went onto, or picks the shelf from a list.
+1. **Unloading a kiln.** Two photos per layer. The kiln tech photographs the
+   layer from above (the kilns are top-loading, so every pot is visible), puts
+   it on a rack shelf, then photographs the shelf with its label in view. The
+   app reads the label to know which shelf it is. Bisque and glaze firings
+   work the same way.
 2. **Finding your work.** Potters open the Firings feed, spot their own pot in
    a layer photo and read the shelf name on it. Tapping the pot marks it as
    theirs and adds it to "My pots".
