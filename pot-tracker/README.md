@@ -3,6 +3,8 @@
 A phone web app for a shared ceramics studio. It answers two questions for
 potters: "has my work been fired?" and "which shelf is it on?".
 
+**Launch plan and audit checklist:** see [LAUNCH.md](LAUNCH.md).
+
 ## How it works
 
 Nothing is attached to the pots, and nobody scans individual pieces.

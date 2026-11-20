@@ -20,7 +20,7 @@ Fill these in before building much. Short answers are fine.
 | Who is it for? | Not decided |
 | What problem does it solve for them? | Not decided |
 | What do they use today instead? | Not decided |
-| How does it make money? | Not decided |
+| How does it make money? | It does not. It is free, and works as a portfolio piece for Nick Fix Dev client work. |
 | What does it cost to run each month? | Not decided |
 | What number says it is working? (visits, sign-ups, sales) | Not decided |
 | When do we stop if it is not working? | Not decided |
@@ -72,9 +72,9 @@ Fill these in before building much. Short answers are fine.
 
 | Item | How to check | Status | Evidence |
 |---|---|---|---|
-| The way it makes money is written in "The plan" | Read the plan above | Not done | |
-| A price is set | Read the plan or the site | Not done | |
-| Payments work, if it charges | Make a test payment | Not done | |
+| The way it makes money is written in "The plan" | Read the plan above | Done | Free; portfolio piece |
+| A price is set | Read the plan or the site | Done | Free |
+| Payments work, if it charges | Make a test payment | Done | Does not charge |
 | Monthly running cost is known | Read the plan above | Not done | |
 
 ## 6. Marketing
