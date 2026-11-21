@@ -30,6 +30,7 @@ Fill these in before building much. Short answers are fine.
 | Item | How to check | Status | Evidence |
 |---|---|---|---|
 | GitHub repo exists | The repo opens on GitHub |  |  |
+| GitHub repo is private | Check the repo's visibility on GitHub |  |  |
 | README says what the app is and how to run it | Read `README.md` |  |  |
 | No passwords or keys in the repo | Search the code and history for secrets |  |  |
 | This file is in the repo and filled in | Read `LAUNCH.md` |  |  |
@@ -40,9 +41,33 @@ Fill these in before building much. Short answers are fine.
 |---|---|---|---|
 | Core feature works end to end | Use the live app for its main job |  |  |
 | Works on a phone | Open it at phone width |  |  |
-| Deploys from the main branch | Find the deploy config or script |  |  |
-| A staging copy exists for trying changes | Find a staging address or branch |  |  |
+| Deploys from the main branch | See "Standard deploy" below |  |  |
+| A staging copy exists for trying changes | Find a preview address for a branch (step 6 of "Standard deploy") |  |  |
 | Errors are reported somewhere | Find error tracking or logs |  |  |
+
+### Standard deploy
+
+Every app deploys the same way: Cloudflare builds and deploys it whenever `main` changes on GitHub. Nobody runs a deploy command by hand. To set an app up this way:
+
+1. **Config in the repo.** A `wrangler.jsonc` in the app folder with the Worker's `name` and every address the app answers on listed under `routes` as custom domains, `www` included.
+2. **Two standard commands.** `npm run build` builds the app. `npx wrangler deploy` deploys it. If the app needs extra build steps, put them inside the `build` script so the two commands stay the same.
+3. **Connect the repo.** In Cloudflare: Workers & Pages, open the Worker (or Create, then Import a repository), Settings, Build, and connect the GitHub repo.
+4. **Same build settings everywhere.** Production branch `main`. Build command `npm run build`. Deploy command `npx wrangler deploy`. Root directory: the app folder if it is not the repo root.
+5. **One shared build token.** When Cloudflare asks for an API token, pick the existing build token; do not create a new one per app.
+6. **Preview builds on.** Turn on builds for other branches with the command `npx wrangler versions upload`. Each branch then gets its own preview address, which serves as staging.
+7. **Secrets in Cloudflare, never in the repo.** Add them under the Worker's Settings, Variables and Secrets.
+8. **Prove it.** Push a small change to `main` and watch it appear under Deployments, then on the live address.
+
+The Cloudflare menu names above were written from memory, so treat the click paths as approximate.
+
+| Item | How to check | Status | Evidence |
+|---|---|---|---|
+| The repo is connected to Cloudflare and a push to `main` deploys | Worker, Settings, Build shows the repo; or push and watch Deployments |  |  |
+| Build command is `npm run build` and deploy command is `npx wrangler deploy` | Read the Worker's Build settings and `package.json` |  |  |
+| Every address, `www` included, is listed in `wrangler.jsonc` | Read `routes` in `wrangler.jsonc` |  |  |
+| It uses the shared build token | Worker, Settings, Build shows the token name |  |  |
+| Other branches get a preview address | Push a branch and look for its preview link |  |  |
+| Nobody deploys by hand | Search the README and scripts for manual deploy steps |  |  |
 
 ## 3. Domain
 
